@@ -62,9 +62,15 @@ namespace ConsoleApp1
             Console.WriteLine("MapCopy result is a " + copyResult.GetLength(0) + " X " + copyResult.GetLength(1) + " array");
             Console.WriteLine(copyResult[0, 0] + " " + copyResult[1, 0]);
             Console.WriteLine(copyResult[0, 1] + " " + copyResult[1, 1]);
+
+            double[,] tFtr = new double[2, 2];
+            tFtr[0, 0] = 1; tFtr[1, 0] = 1;
+            tFtr[0, 1] = 1; tFtr[1, 1] = 1;
+
+            double[,] testConv = myProgram.ComputeConvolution(tFtr, cpTest);
             Console.ReadKey(true);
             //double[,] nn;
-
+             
 
         }
         /// <summary>
