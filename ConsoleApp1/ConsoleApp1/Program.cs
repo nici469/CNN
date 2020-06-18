@@ -17,6 +17,47 @@ namespace ConsoleApp1
             image = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Desert.jpg");
             Console.WriteLine("hello world");
 
+            int N = image.Width;
+            int M = image.Height;
+            double[,] testMap = new double[M, M];
+
+            //Bitmap newImage = new Bitmap(M, M);
+            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square2.jpg");
+            for (int i = 0; i < M; i++)
+            {
+                for(int j=0;j< M; j++)
+                {
+                    Color imColor = newImage.GetPixel(i, j);
+                    int greyscale = (imColor.R) / 3 + (imColor.G) / 3 + (imColor.B) / 3;
+                    
+                    //Color newColor = Color.FromArgb(greyscale, greyscale, greyscale);
+                    //newImage.SetPixel(i, j, newColor);
+                    testMap[i, j] = (double)greyscale;
+                }
+            }
+
+            double[,] Sx = new double[3, 3];
+            Sx[0, 0] = -1; Sx[1, 0] = 0; Sx[2, 0] = 1;
+            Sx[0, 1] = -1; Sx[1, 1] = 0; Sx[2, 1] = 1;
+            Sx[0, 2] = -1; Sx[1, 2] = 0; Sx[2, 2] = 1;
+
+            double[,] Sy = new double[3, 3];
+            Sy[0, 0] = -1; Sy[1, 0] = -1; Sy[2, 0] = -1;
+            Sy[0, 1] = 0; Sy[1, 1] = 0; Sy[2, 1] = 0;
+            Sy[0, 2] = 1; Sy[1, 2] = 1; Sy[2, 2] = 1;
+
+            Program newProg = new Program();
+            double[,] testx = newProg.ComputeConvolution(Sx, testMap);
+            double[,] testy = newProg.ComputeConvolution(Sy, testMap);
+
+
+            newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square2.jpg");
+
+
+
+
+
+
             //test editing image pixel
             for(int i = 0; i < image.Width; i++)
             {
@@ -71,7 +112,7 @@ namespace ConsoleApp1
             Console.ReadKey(true);
             //double[,] nn;
              
-
+             
         }
         /// <summary>
         /// Computes the convolution of filter Wf on input layet I.
