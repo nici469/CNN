@@ -42,16 +42,37 @@ namespace ConsoleApp1
             Sx[0, 2] = -1; Sx[1, 2] = 0; Sx[2, 2] = 1;
 
             double[,] Sy = new double[3, 3];
-            Sy[0, 0] = -1; Sy[1, 0] = -1; Sy[2, 0] = -1;
+            Sy[0, 0] = -1; Sy[1, 0] = -2; Sy[2, 0] = -1;
             Sy[0, 1] = 0; Sy[1, 1] = 0; Sy[2, 1] = 0;
-            Sy[0, 2] = 1; Sy[1, 2] = 1; Sy[2, 2] = 1;
+            Sy[0, 2] = 1; Sy[1, 2] = 2; Sy[2, 2] = 1;
 
             Program newProg = new Program();
             double[,] testx = newProg.ComputeConvolution(Sx, testMap);
             double[,] testy = newProg.ComputeConvolution(Sy, testMap);
+            int c1 = testx.GetLength(0);
+            int c2 = testx.GetLength(1);
+
+            double[,] ftrOut = new double[c1, c1];
+            for(int i = 0; i < c1; i++)
+            {
+                for(int j=0;j< c1; j++)
+                {
+                    double output= Math.Sqrt(  (testx[i, j] *testx[i,j])+ (testy[i,j]*testy[i,j])   );
+                    Color newColor = Color.FromArgb((int)output/3, (int)output/3, (int)output/3);
+
+                    newImage.SetPixel(i, j, newColor);
+                }
+            }
 
 
-            newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square2.jpg");
+
+
+
+
+
+
+
+            newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square3.jpg");
 
 
 
