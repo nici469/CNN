@@ -22,7 +22,7 @@ namespace ConsoleApp1
             double[,] testMap = new double[M, M];
 
             //Bitmap newImage = new Bitmap(M, M);
-            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square2.jpg");
+            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips2.jpg");
             for (int i = 0; i < M; i++)
             {
                 for(int j=0;j< M; j++)
@@ -39,7 +39,7 @@ namespace ConsoleApp1
             double[,] Sx = new double[3, 3];
             Sx[0, 0] = -1; Sx[1, 0] = 0; Sx[2, 0] = 1;
             Sx[0, 1] = -1; Sx[1, 1] = 0; Sx[2, 1] = 1;
-            Sx[0, 2] = -1; Sx[1, 2] = 0; Sx[2, 2] = 1;
+            Sx[0, 2] = -1; Sx[1, 2] = 0; Sx[2, 2] = 1 ;
 
             double[,] Sy = new double[3, 3];
             Sy[0, 0] = -1; Sy[1, 0] = -2; Sy[2, 0] = -1;
@@ -58,7 +58,10 @@ namespace ConsoleApp1
                 for(int j=0;j< c1; j++)
                 {
                     double output= Math.Sqrt(  (testx[i, j] *testx[i,j])+ (testy[i,j]*testy[i,j])   );
-                    Color newColor = Color.FromArgb((int)output/3, (int)output/3, (int)output/3);
+                    int colorInt = (int)output / 3;//200-(int)output/3;
+                    if (colorInt < 0) { colorInt = 0; }
+
+                    Color newColor = Color.FromArgb(colorInt, colorInt, colorInt);
 
                     newImage.SetPixel(i, j, newColor);
                 }
