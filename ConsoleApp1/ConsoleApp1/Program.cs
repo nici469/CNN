@@ -135,15 +135,16 @@ namespace ConsoleApp1
             double[,] testConv = myProgram.ComputeConvolution(tFtr, cpTest);
             Console.ReadKey(true);
             //double[,] nn;
-             
+            // myProgram.ComputeConvolution(,)
              
         }
+
         /// <summary>
         /// Computes the convolution of filter Wf on input layet I.
         /// for now, Wf, I and the output array must be square arrays
         /// </summary>
-        /// <param filter matrix="Wf"></param>
-        /// <param Input array="I"></param>
+        /// <param name="Wf"> The filter matrix</param>
+        /// <param name="I">the input array</param>
         /// <returns></returns>
         double[,] ComputeConvolution(double[,] Wf, Double[,] I)
         {
@@ -172,10 +173,10 @@ namespace ConsoleApp1
         /// copies out an (arrayDim x arrayDim) sized array from the input array, with a top left
         /// reference defined by (xPos, yPos)
         /// </summary>
-        /// <param name="inputArray"></param>
-        /// <param name="arrayDim"></param>
-        /// <param name="xPos"></param>
-        /// <param name="yPos"></param>
+        /// <param name="inputArray">the input array</param>
+        /// <param name="arrayDim">dimension of the square output array</param>
+        /// <param name="xPos">the x-position reference in the input array</param>
+        /// <param name="yPos">the y-position reference in the input array</param>
         /// <returns></returns>
         Double[,] MapCopy(double[,] inputArray, int arrayDim, int xPos, int yPos)
         {
