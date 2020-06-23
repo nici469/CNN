@@ -188,7 +188,104 @@ namespace ConsoleApp1
 
 
 
+        public static ImageLayer operator +(ImageLayer inputA, ImageLayer inputB) {
+            //if the dimesions and greyscale properties of the two inputs dont match, throw
+            //an exception
+            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
 
+            if (!inputA.IsGrey)
+            {
+                //define AddMap
+            }
+
+        }
+        /// <summary>
+        /// performs the element-wise addition of the two input arrays
+        /// </summary>
+        /// <param name="input1">the first input array</param>
+        /// <param name="input2">the second input array</param>
+        /// <returns></returns>
+        static double[,] AddMap(double[,] input1, double[,] input2)
+        {
+            //throw an exception if the dimensions of the input arrays do not match
+            if(!CheckDimension(input1, input2)) { throw new Exception("input arrays are of dissimilar dimensions :AddMap"); }
+
+            int n = input1.GetLength(0);
+            int m = input2.GetLength(1);
+
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i, j] = input1[i, j] + input2[i, j];
+                }
+            }
+            return output;
+
+        }
+
+        /// <summary>
+        /// returns true if the R, G and B channels of the two image layers together all have the same dimensions
+        /// and also that the isGrey properties of both inputs are equal
+        /// </summary>
+        /// <param name="imA"></param>
+        /// <param name="imB"></param>
+        /// <returns></returns>
+        static bool CheckDimension(ImageLayer imA, ImageLayer imB)
+        {
+            //if one imageLayer is a greyscale, while the other isnt, return false
+            if(imA.IsGrey != imB.IsGrey) { return false; }
+
+            //if both imageLayers are not greyscale
+            if (!imA.IsGrey && imA.IsGrey==imB.IsGrey)
+            {
+                //check if the channels of imA have uniform dimensions
+                bool checkA = CheckDimension(imA.Rcn, imA.Gcn) && CheckDimension(imA.Gcn, imA.Bcn);
+
+                //check if the channels of imB have uniform dimensions
+                bool checkB = CheckDimension(imB.Rcn, imB.Gcn) && CheckDimension(imB.Gcn, imB.Bcn);
+
+                //if the channel dimenions in imA are the same and the channel dimensions in imB are thesame
+                // check if the dimensions of imA match those of imB
+                if(checkA && checkB) { return CheckDimension(imA.Rcn, imB.Rcn); }
+                else { return false; }
+            }
+            else if(imA.IsGrey && imA.IsGrey == imB.IsGrey)
+            {//if both imageLayers are greyscale, compare only their R-channels
+                return CheckDimension(imA.Rcn, imB.Rcn);
+            }
+
+            //program execution shouldnt possibly get here
+            throw new Exception("dimensions of imageLayers to be checked have unknown states");
+           
+        }
+
+        /// <summary>
+        /// returns true if the dimensions of the two input arrays match exactly, else, it returns 
+        /// false
+        /// </summary>
+        /// <param name="A">the first array</param>
+        /// <param name="B">the second array</param>
+        /// <returns></returns>
+        static bool CheckDimension(double[,] A, double[,] B)
+        {
+            int a0 = A.GetLength(0);
+            int a1 = A.GetLength(1);
+
+            int b0 = B.GetLength(0);
+            int b1 = B.GetLength(1);
+
+            if(a0==b0 && a1 == b1) { return true; }
+            else { return false; }
+        }
+
+
+
+
+
+        //convolution taking Imlayer object as input still needs a lot of clarity
         /// <summary>
         /// Computes the convolution of filter Wf on input layet I.
         /// for now, Wf, I and the output array must be square arrays
@@ -282,6 +379,8 @@ namespace ConsoleApp1
             }
             return output;
         }
+
+
 
     }
 }
