@@ -58,20 +58,15 @@ namespace ConsoleApp1
                 for(int j=0;j< c1; j++)
                 {
                     double output= Math.Sqrt(  (testx[i, j] *testx[i,j])+ (testy[i,j]*testy[i,j])   );
-<<<<<<< HEAD
                     int colorInt = (int)output / 3;//200-(int)output/3;
                     if (colorInt < 0) { colorInt = 0; }
 
                     Color newColor = Color.FromArgb(colorInt, colorInt, colorInt);
-=======
-                    Color newColor = Color.FromArgb((int)output/3, (int)output/3, (int)output/3);
->>>>>>> 9380dc3f9befba2a652100fbcad13d73dfe52267
 
                     newImage.SetPixel(i, j, newColor);
                 }
             }
 
-<<<<<<< HEAD
 
 
 
@@ -80,16 +75,6 @@ namespace ConsoleApp1
 
 
 
-=======
-
-
-
-
-
-
-
-
->>>>>>> 9380dc3f9befba2a652100fbcad13d73dfe52267
             newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square3.jpg");
 
 
