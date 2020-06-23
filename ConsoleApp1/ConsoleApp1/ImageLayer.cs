@@ -58,6 +58,7 @@ namespace ConsoleApp1
         /// <summary>
         /// the Blue-channel array
         /// </summary>
+        /// <value> gets the value of the  B channel</value>
         public double[,] Bcn
         {
             get { return this.B; }
@@ -186,6 +187,242 @@ namespace ConsoleApp1
 
         }
 
+        /// <summary>
+        /// adds an integer to the relevant image channels of the imageLayer object.
+        /// if the object is a greyscale, it adds the integer to
+        /// <para> only the R-channel, else, it adds the integer to all the color channels</para>
+        /// </summary>
+        /// <param name="num">the integer to be added to the imageLayer object</param>
+        /// <param name="imLayer">the ImageLayer object</param>
+        /// <returns></returns>
+        public static ImageLayer operator +(int num, ImageLayer imLayer)
+        {
+            if (imLayer.IsGrey)
+            {
+                double[,] outArray = AddNumber(num, imLayer.Rcn);
+                return new ImageLayer(outArray);
+            }
+            else
+            {//if the imageLayer is not a greyScale
+                double[,] outR = AddNumber(num, imLayer.Rcn);
+                double[,] outG = AddNumber(num, imLayer.Gcn);
+                double[,] outB = AddNumber(num, imLayer.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+        /// <summary>
+        /// adds an integer to the relevant image channels of the imageLayer object. if the object
+        /// <para>is a greyscale, it adds the integer to only the R-channel, else, it adds the integer to all the color channels</para>
+        /// </summary>
+        /// <param name="num">the integer to be added to the imageLayer object</param>
+        /// <param name="imLayer">the ImageLayer object</param>
+        /// <returns></returns>
+        public static ImageLayer operator +(ImageLayer imLayer ,int num)
+        {
+            if (imLayer.IsGrey)
+            {
+                double[,] outArray = AddNumber(num, imLayer.Rcn);
+                return new ImageLayer(outArray);
+            }
+            else
+            {//if the imageLayer is not a greyScale
+                double[,] outR = AddNumber(num, imLayer.Rcn);
+                double[,] outG = AddNumber(num, imLayer.Gcn);
+                double[,] outB = AddNumber(num, imLayer.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+        /// <summary>
+        /// subtracts the relevant image array channels in the ImageLayer object from an integer
+        /// </summary>
+        /// <param name="num">an integer</param>
+        /// <param name="imLayer">an ImageLayer Object</param>
+        /// <returns></returns>
+        public static ImageLayer operator - (int num, ImageLayer imLayer)
+        {
+            if (imLayer.IsGrey)
+            {
+                double[,] outArray = Subtract(num, imLayer.Rcn);
+                return new ImageLayer(outArray);
+            }
+            else
+            {//if the imageLayer is not a greyScale
+                double[,] outR = Subtract(num, imLayer.Rcn);
+                double[,] outG = Subtract(num, imLayer.Gcn);
+                double[,] outB = Subtract(num, imLayer.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+
+        /// <summary>
+        /// subtracts an integer from the elements in the relevant channels of the ImageLayer object
+        /// </summary>
+        /// <param name="imLayer">the ImageLayer object</param>
+        /// <param name="num">the integer</param>
+        /// <returns></returns>
+        public static ImageLayer operator -(ImageLayer imLayer, int num)
+        {
+            if (imLayer.IsGrey)
+            {
+                double[,] outArray = Subtract(imLayer.Rcn, num);
+                return new ImageLayer(outArray);
+            }
+            else
+            {//if the imageLayer is not a greyScale
+                double[,] outR = Subtract(imLayer.Rcn, num);
+                double[,] outG = Subtract(imLayer.Gcn ,num);
+                double[,] outB = Subtract(imLayer.Bcn, num);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+        /// <summary>
+        /// multiplies the relevant image channels of the ImageLayer obect with a number value, 
+        /// <para>depending on whether its is a greyscale</para>
+        /// </summary>
+        /// <remarks> let me see the remark</remarks>
+        /// <param name="imLayer"></param>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static ImageLayer operator *(ImageLayer imLayer, double num)
+        {
+            if (imLayer.IsGrey)
+            {
+                double[,] outArray = Multiply(imLayer.Rcn, num);
+                return new ImageLayer(outArray);
+            }
+            else
+            {//if the imageLayer is not a greyScale
+                double[,] outR = Multiply(imLayer.Rcn, num);
+                double[,] outG = Multiply(imLayer.Gcn, num);
+                double[,] outB = Multiply(imLayer.Bcn, num);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+        /// <summary>
+        /// multiplies the relevant image channels of the ImageLayer obect with a number value, 
+        /// <para>depending on whether its is a greyscale</para>
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="imLayer"></param>
+        /// <returns></returns>
+        public static ImageLayer operator *(double num, ImageLayer imLayer)
+        {
+            ImageLayer output =imLayer * num;
+            return output;
+        }
+
+        /// <summary>
+        /// multiplies all the elements of a data array with a number 
+        /// </summary>
+        /// <param name="num">the number to multiply with. must be a Double</param>
+        /// <param name="data">the data array</param>
+        /// <returns></returns>
+        static double[,] Multiply(double num, double[,] data)
+        {
+            int n = data.GetLength(0);
+            int m = data.GetLength(1);
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i, j] = num * data[i,j];
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// multiplies all the elements of a data array with a number 
+        /// </summary>
+        /// <param name="num">the number to multiply with. must be a Double</param>
+        /// <param name="data">the data array</param>
+        /// <returns></returns>
+        static double[,] Multiply(double[,] data, double num)
+        {
+            return Multiply(num, data);
+            
+        }
+
+        /// <summary>
+        /// subtracts all the elements of the data array from an integer. 
+        /// the result is an array whose element position correspond to
+        /// the position of the elemt n the data array that produced them:
+        /// num - data
+        /// </summary>
+        /// <param name="num"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        static double[,] Subtract(int num, double[,] data)
+        {
+            int n = data.GetLength(0);
+            int m = data.GetLength(1);
+            double[,] output = new double[n, m];
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    output[i, j] = (double)num - data[i, j];
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// subtracts an integer from all the corresponding elements of a data array
+        /// : Date[] - num
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        static double[,] Subtract(double[,] data, int num)
+        {
+            int n = data.GetLength(0);
+            int m = data.GetLength(1);
+            double[,] output = new double[n, m];
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    output[i, j] = data[i, j] - num;
+                }
+            }
+            return output;
+        }
+
+        /// <summary>
+        /// adds an integer to all the elements of a data array
+        /// </summary>
+        /// <param name="num">the integer to  be added</param>
+        /// <param name="data">the data array</param>
+        /// <returns></returns>
+        static double[,] AddNumber(int num, double[,] data)
+        {
+            int n = data.GetLength(0);
+            int m = data.GetLength(1);
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i, j] = num + data[i, j];
+                }
+            }
+            return output;
+        }
 
         /// <summary>
         /// overloaded plus operator
