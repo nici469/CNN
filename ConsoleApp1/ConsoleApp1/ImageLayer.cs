@@ -187,7 +187,12 @@ namespace ConsoleApp1
         }
 
 
-
+        /// <summary>
+        /// overloaded plus operator
+        /// </summary>
+        /// <param name="inputA"></param>
+        /// <param name="inputB"></param>
+        /// <returns></returns>
         public static ImageLayer operator +(ImageLayer inputA, ImageLayer inputB) {
             //if the dimesions and greyscale properties of the two inputs dont match, throw
             //an exception
@@ -208,6 +213,58 @@ namespace ConsoleApp1
             }
 
         }
+
+        /// <summary>
+        /// overloaded  minus operator. it performs element-wise operatio: inputA - inputB
+        /// </summary>
+        /// <param name="inputA"></param>
+        /// <param name="inputB"></param>
+        /// <returns></returns>
+        public static ImageLayer operator -(ImageLayer inputA, ImageLayer inputB)
+        {
+            //if the dimesions and greyscale properties of the two inputs dont match, throw
+            //an exception
+            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
+
+            if (!inputA.IsGrey)//if both inputs are not greyscale
+            {//note at this point, if one input is a greyscale, so is the other, and vice versa
+                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
+                double[,] outG = SubtractMap(inputA.Gcn, inputB.Gcn);
+                double[,] outB = SubtractMap(inputA.Bcn, inputB.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+            else
+            {//if both imagelayer inputs are greyScale
+                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
+                return new ImageLayer(outR);
+            }
+        }
+
+        /// <summary>
+        /// returns the element-wise operation: input1 - input2
+        /// </summary>
+        /// <param name="input1"></param>
+        /// <param name="input2"></param>
+        /// <returns></returns>
+        static double[,] SubtractMap(double[,] input1, double[,] input2) {
+            if (!CheckDimension(input1, input2)) { throw new Exception("input arrays are of dissimilar dimensions :AddMap"); }
+
+            int n = input1.GetLength(0);
+            int m = input2.GetLength(1);
+
+            double[,] output = new double[n, m];
+
+            for (int i = 0; i < n; i++)
+            {
+                for (int j = 0; j < m; j++)
+                {
+                    output[i, j] = input1[i, j] - input2[i, j];
+                }
+            }
+            return output;
+        }
+
         /// <summary>
         /// performs the element-wise addition of the two input arrays
         /// </summary>
