@@ -193,9 +193,18 @@ namespace ConsoleApp1
             //an exception
             if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
 
-            if (!inputA.IsGrey)
-            {
-                //define AddMap
+            if (!inputA.IsGrey)//if both inputs are not greyscale
+            {//note at this point, if one input is a greyscale, so is the other, and vice versa
+                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
+                double[,] outG = AddMap(inputA.Gcn, inputB.Gcn);
+                double[,] outB = AddMap(inputA.Bcn, inputB.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+            else
+            {//if both imagelayer inputs are greyScale
+                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
+                return new ImageLayer(outR);
             }
 
         }
