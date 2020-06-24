@@ -12,19 +12,19 @@ namespace ConsoleApp1
         /// <summary>
         /// the Red channel of the image data
         /// </summary>
-        double[,] R;
+        readonly double[,] R;
         /// <summary>
         /// the Green channel of the image data
         /// </summary>
-        double[,] G;
+        readonly double[,] G;
         /// <summary>
         /// the Blue channel of the image data
         /// </summary>
-        double[,] B;
+        readonly double[,] B;
         /// <summary>
         /// image layer is grey scale by default unless initialised otherwise
         /// </summary>
-        bool isGreyScale =true;
+        readonly bool isGreyScale =true;
         /// <summary>
         /// instantiates the imageLayer as greyScale, with the input copied into the R-channel
         /// </summary>
@@ -64,7 +64,7 @@ namespace ConsoleApp1
             get { return this.B; }
         }
         /// <summary>
-        /// initialise all three color channels of the imaga layer. is GreyScale is set to false
+        /// initialise all three color channels of the imaga layer. isGreyScale is set to false
         /// </summary>
         /// <param name="inputR">the R-channel input</param>
         /// <param name="inputG">the G-channel input</param>
@@ -187,6 +187,35 @@ namespace ConsoleApp1
 
         }
 
+        //the Plus operator
+        /// <summary>
+        /// overloaded plus operator
+        /// </summary>
+        /// <param name="inputA"></param>
+        /// <param name="inputB"></param>
+        /// <returns></returns>
+        public static ImageLayer operator +(ImageLayer inputA, ImageLayer inputB)
+        {
+            //if the dimesions and greyscale properties of the two inputs dont match, throw
+            //an exception
+            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
+
+            if (!inputA.IsGrey)//if both inputs are not greyscale
+            {//note at this point, if one input is a greyscale, so is the other, and vice versa
+                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
+                double[,] outG = AddMap(inputA.Gcn, inputB.Gcn);
+                double[,] outB = AddMap(inputA.Bcn, inputB.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+            else
+            {//if both imagelayer inputs are greyScale
+                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
+                return new ImageLayer(outR);
+            }
+
+        }
+
         /// <summary>
         /// adds an integer to the relevant image channels of the imageLayer object.
         /// if the object is a greyscale, it adds the integer to
@@ -211,6 +240,7 @@ namespace ConsoleApp1
                 return new ImageLayer(outR, outG, outB);
             }
         }
+
         /// <summary>
         /// adds an integer to the relevant image channels of the imageLayer object. if the object
         /// <para>is a greyscale, it adds the integer to only the R-channel, else, it adds the integer to all the color channels</para>
@@ -220,21 +250,11 @@ namespace ConsoleApp1
         /// <returns></returns>
         public static ImageLayer operator +(ImageLayer imLayer ,int num)
         {
-            if (imLayer.IsGrey)
-            {
-                double[,] outArray = AddNumber(num, imLayer.Rcn);
-                return new ImageLayer(outArray);
-            }
-            else
-            {//if the imageLayer is not a greyScale
-                double[,] outR = AddNumber(num, imLayer.Rcn);
-                double[,] outG = AddNumber(num, imLayer.Gcn);
-                double[,] outB = AddNumber(num, imLayer.Bcn);
-
-                return new ImageLayer(outR, outG, outB);
-            }
+            return(num + imLayer);           
+            
         }
 
+        //the minus operator
         /// <summary>
         /// subtracts the relevant image array channels in the ImageLayer object from an integer
         /// </summary>
@@ -258,6 +278,32 @@ namespace ConsoleApp1
             }
         }
 
+        /// <summary>
+        /// overloaded  minus operator. it performs element-wise operation: inputA - inputB
+        /// </summary>
+        /// <param name="inputA"></param>
+        /// <param name="inputB"></param>
+        /// <returns></returns>
+        public static ImageLayer operator -(ImageLayer inputA, ImageLayer inputB)
+        {
+            //if the dimesions and greyscale properties of the two inputs dont match, throw
+            //an exception
+            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
+
+            if (!inputA.IsGrey)//if both inputs are not greyscale
+            {//note at this point, if one input is a greyscale, so is the other, and vice versa
+                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
+                double[,] outG = SubtractMap(inputA.Gcn, inputB.Gcn);
+                double[,] outB = SubtractMap(inputA.Bcn, inputB.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+            else
+            {//if both imagelayer inputs are greyScale
+                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
+                return new ImageLayer(outR);
+            }
+        }
 
         /// <summary>
         /// subtracts an integer from the elements in the relevant channels of the ImageLayer object
@@ -282,6 +328,7 @@ namespace ConsoleApp1
             }
         }
 
+        //the multiply operator
         /// <summary>
         /// multiplies the relevant image channels of the ImageLayer obect with a number value, 
         /// <para>depending on whether its is a greyscale</para>
@@ -319,6 +366,63 @@ namespace ConsoleApp1
             ImageLayer output =imLayer * num;
             return output;
         }
+
+        /// <summary>
+        /// on each pixel, it selects the channel with the minimum value 
+        /// </summary>
+        /// <returns> a double[] array representing the minimum value of all three channels for each pixel</returns>
+        public double[,] SelectMinChannel()
+        {
+            if (IsGrey) { return Rcn; }
+            else
+            {
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+                double[,] output = new double[n, m];
+
+                for(int i = 0; i < n; i++)
+                {
+                    for(int j = 0; j < m; j++)
+                    {
+                        //get the minimum between the red and green channel values for a given pixel
+                        double min1 = Math.Min(Rcn[i, j], Gcn[i, j]);
+
+                        //get the minimum between the Blue channel and the Red and Green channels for the given pixel
+                        output[i, j] = Math.Min(min1, Bcn[i, j]);
+                    }
+                }
+                return output;
+            }
+        }
+
+        /// <summary>
+        /// on each pixel, it selects the channel with the maximum value 
+        /// </summary>
+        /// <returns>a double[] array representing the maximum value of all three channels for each pixel</returns>
+        public double[,] SelectMaxChannel()
+        {
+            if (IsGrey) { return Rcn; }
+            else
+            {
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+                double[,] output = new double[n, m];
+
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        //get the maximum between the red and green channel values for a given pixel
+                        double min1 = Math.Max(Rcn[i, j], Gcn[i, j]);
+
+                        //get the maximum between the Blue channel and the Red and Green channels for the given pixel
+                        output[i, j] = Math.Max(min1, Bcn[i, j]);
+                    }
+                }
+                return output;
+            }
+        }
+
 
         /// <summary>
         /// multiplies all the elements of a data array with a number 
@@ -424,59 +528,9 @@ namespace ConsoleApp1
             return output;
         }
 
-        /// <summary>
-        /// overloaded plus operator
-        /// </summary>
-        /// <param name="inputA"></param>
-        /// <param name="inputB"></param>
-        /// <returns></returns>
-        public static ImageLayer operator +(ImageLayer inputA, ImageLayer inputB) {
-            //if the dimesions and greyscale properties of the two inputs dont match, throw
-            //an exception
-            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
+        
 
-            if (!inputA.IsGrey)//if both inputs are not greyscale
-            {//note at this point, if one input is a greyscale, so is the other, and vice versa
-                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
-                double[,] outG = AddMap(inputA.Gcn, inputB.Gcn);
-                double[,] outB = AddMap(inputA.Bcn, inputB.Bcn);
-
-                return new ImageLayer(outR, outG, outB);
-            }
-            else
-            {//if both imagelayer inputs are greyScale
-                double[,] outR = AddMap(inputA.Rcn, inputB.Rcn);
-                return new ImageLayer(outR);
-            }
-
-        }
-
-        /// <summary>
-        /// overloaded  minus operator. it performs element-wise operatio: inputA - inputB
-        /// </summary>
-        /// <param name="inputA"></param>
-        /// <param name="inputB"></param>
-        /// <returns></returns>
-        public static ImageLayer operator -(ImageLayer inputA, ImageLayer inputB)
-        {
-            //if the dimesions and greyscale properties of the two inputs dont match, throw
-            //an exception
-            if (!CheckDimension(inputA, inputB)) { throw new Exception("objectproperties do not match :plus"); }
-
-            if (!inputA.IsGrey)//if both inputs are not greyscale
-            {//note at this point, if one input is a greyscale, so is the other, and vice versa
-                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
-                double[,] outG = SubtractMap(inputA.Gcn, inputB.Gcn);
-                double[,] outB = SubtractMap(inputA.Bcn, inputB.Bcn);
-
-                return new ImageLayer(outR, outG, outB);
-            }
-            else
-            {//if both imagelayer inputs are greyScale
-                double[,] outR = SubtractMap(inputA.Rcn, inputB.Rcn);
-                return new ImageLayer(outR);
-            }
-        }
+       
 
         /// <summary>
         /// returns the element-wise operation: input1 - input2
