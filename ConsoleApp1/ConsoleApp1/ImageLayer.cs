@@ -459,6 +459,49 @@ namespace ConsoleApp1
 
         }
 
+        /// <summary>
+        /// performs the element-wise square root of all the relevant channels in the imageLayer
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        public static ImageLayer Sqrt(ImageLayer input)
+        {
+            //if the imageLayer is a greyscale, get the squareroort of only the R channel
+            if (input.IsGrey)
+            {
+                double[,] outR = Sqrt(input.Rcn);
+                return new ImageLayer(outR);
+            }
+            else {//if it is not a greyscale, get the squaroot of all three channels
+                double[,] outR = Sqrt(input.Rcn);
+                double[,] outG = Sqrt(input.Gcn);
+                double[,] outB = Sqrt(input.Bcn);
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+        /// <summary>
+        /// performs the element-wise square root of the input array
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns></returns>
+        static double[,] Sqrt(double[,] input)
+        {
+            int n = input.GetLength(0);
+            int m = input.GetLength(1);
+
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i, j] = Math.Sqrt(input[i, j]);
+                }
+            }
+
+            return output;
+        }
 
         
         /// <summary>
