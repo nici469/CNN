@@ -841,8 +841,106 @@ namespace ConsoleApp1
             }
         }
 
+        /// <summary>
+        /// returns n integer array that trims out all overbound
+        /// <para>(less than 0 or greater than255) values to the boundaries 0 or 255</para>
+        /// </summary>
+        /// <param name="input"></param>
+        /// <returns>a 0-255 bounded integer array</returns>
+        public int[,] FinaliseTrim(double[,] input)
+        {
+            int n = input.GetLength(0);
+            int m = input.GetLength(1);
+            int[,] output = new int[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    //if the input at this pixel is less than zero, peg the output to zero
+                    if ((int)input[i, j] < 0) {
+                        output[i, j] = 0; }
+
+                    //if the input value at the pixel is more than 255, peg the output to 255
+                    else if ((int)input[i, j] > 255) {
+                        output[i, j] = 255; }
+
+                    //if the input is within bounds, peg the output to the int value of the input
+                    else {
+                        output[i, j] = (int)input[i, j]; }
+
+                }
+            }
+
+            return output;
+
+        }
+
+        /// <summary>
+        /// Trims the channels of the ImageLayer object to 0-255 range, and
+        /// <para> outputs the result as a bitmap</para>
+        /// </summary>
+        /// <returns></returns>
+        public Bitmap FinaliseBitmap()
+        {
+            //if the imageLayer object is a greyscale, work with only the R-channel
+            if (IsGrey)
+            {
+                //get the channel dimensions
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+
+                //trim the data to give  0-255 bounded int array
+                int[,] RTrim = FinaliseTrim(Rcn);
+
+                //the output bitmap
+                Bitmap outBitmap = new Bitmap(n, m);
+
+                for(int i = 0; i < n; i++)
+                {
+                    for(int j = 0; j < m; j++)
+                    {
+                        int grey = RTrim[i, j];
+
+                        //fill the output color with the grey value
+                        Color color = Color.FromArgb(grey, grey, grey);
+                        outBitmap.SetPixel(i, j, color);
+                    }
+                }
+                return outBitmap;
+
+            }
+            else
+            {//if the imageLayer object is not a greyscale, work with all three channels
+
+                //get the channel dimensions
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+
+                //trim the data to give  0-255 bounded int arrays
+                int[,] RTrim = FinaliseTrim(Rcn);
+                int[,] GTrim = FinaliseTrim(Gcn);
+                int[,] BTrim = FinaliseTrim(Bcn);
+
+                Bitmap outBitmap = new Bitmap(n, m);
+
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        int red = RTrim[i, j];
+                        int green = GTrim[i, j];
+                        int blue = BTrim[i, j];
+
+                        Color color = Color.FromArgb(red, blue, green);
+                        outBitmap.SetPixel(i, j, color);
+                    }
+                }
+                return outBitmap;
+
+            }
 
 
-
+        }
     }
 }
