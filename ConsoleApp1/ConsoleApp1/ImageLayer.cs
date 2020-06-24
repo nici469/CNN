@@ -366,63 +366,62 @@ namespace ConsoleApp1
             ImageLayer output =imLayer * num;
             return output;
         }
-
         /// <summary>
-        /// on each pixel, it selects the channel with the minimum value 
+        /// performs element-wise multiplication on corresponding channels in bothe imagelayers
+        /// <para>i.e imA.Rcn * imB.Rcn is the final output R-channel, and same for other channels</para>
         /// </summary>
-        /// <returns> a double[] array representing the minimum value of all three channels for each pixel</returns>
-        public double[,] SelectMinChannel()
+        /// <param name="imA"></param>
+        /// <param name="imB"></param>
+        /// <returns></returns>
+        public static ImageLayer operator *(ImageLayer imA, ImageLayer imB)
         {
-            if (IsGrey) { return Rcn; }
+            //throw an error if the R,G,B or isGrey properties of both imageLayers dont match
+            if(!CheckDimension(imA, imB)) {
+                throw new Exception("ImageLayer objects must have similar properties and dimensions : Multiply"); }
+
+            //if both imageLayer objects are greyscales, multiply only their R-channels
+            if (imA.IsGrey)
+            {
+                double[,] outR = Multiply(imA.Rcn, imB.Rcn);
+                return new ImageLayer(outR);
+            }
             else
             {
-                int n = Rcn.GetLength(0);
-                int m = Rcn.GetLength(1);
-                double[,] output = new double[n, m];
+                double[,] outR = Multiply(imA.Rcn, imB.Rcn);
+                double[,] outG = Multiply(imA.Gcn, imB.Gcn);
+                double[,] outB = Multiply(imA.Bcn, imB.Bcn);
 
-                for(int i = 0; i < n; i++)
-                {
-                    for(int j = 0; j < m; j++)
-                    {
-                        //get the minimum between the red and green channel values for a given pixel
-                        double min1 = Math.Min(Rcn[i, j], Gcn[i, j]);
-
-                        //get the minimum between the Blue channel and the Red and Green channels for the given pixel
-                        output[i, j] = Math.Min(min1, Bcn[i, j]);
-                    }
-                }
-                return output;
+                return new ImageLayer(outR, outG, outB);
             }
+            
         }
+
 
         /// <summary>
-        /// on each pixel, it selects the channel with the maximum value 
+        /// performs the element-wise multiplication of two arrays
         /// </summary>
-        /// <returns>a double[] array representing the maximum value of all three channels for each pixel</returns>
-        public double[,] SelectMaxChannel()
+        /// <param name="inpA">the first array</param>
+        /// <param name="inpB">the second array</param>
+        /// <returns></returns>
+        public static double[,] Multiply(double[,] inpA, double[,] inpB)
         {
-            if (IsGrey) { return Rcn; }
-            else
+            //if the diumensions of the two arrays don't match, throw an error
+            if (!CheckDimension(inpA, inpB)) { throw new Exception("arrays mustbe of similar sizes to be multiplied"); }
+
+            int n = inpA.GetLength(0);
+            int m = inpA.GetLength(1);
+
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
             {
-                int n = Rcn.GetLength(0);
-                int m = Rcn.GetLength(1);
-                double[,] output = new double[n, m];
-
-                for (int i = 0; i < n; i++)
+                for(int j = 0; j < m; j++)
                 {
-                    for (int j = 0; j < m; j++)
-                    {
-                        //get the maximum between the red and green channel values for a given pixel
-                        double min1 = Math.Max(Rcn[i, j], Gcn[i, j]);
-
-                        //get the maximum between the Blue channel and the Red and Green channels for the given pixel
-                        output[i, j] = Math.Max(min1, Bcn[i, j]);
-                    }
+                    output[i, j] = inpA[i, j] * inpB[i, j];
                 }
-                return output;
             }
+            return output;
         }
-
 
         /// <summary>
         /// multiplies all the elements of a data array with a number 
@@ -436,16 +435,18 @@ namespace ConsoleApp1
             int m = data.GetLength(1);
             double[,] output = new double[n, m];
 
-            for(int i = 0; i < n; i++)
+            for (int i = 0; i < n; i++)
             {
-                for(int j = 0; j < m; j++)
+                for (int j = 0; j < m; j++)
                 {
-                    output[i, j] = num * data[i,j];
+                    output[i, j] = num * data[i, j];
                 }
             }
             return output;
         }
 
+
+        
         /// <summary>
         /// multiplies all the elements of a data array with a number 
         /// </summary>
@@ -455,9 +456,11 @@ namespace ConsoleApp1
         static double[,] Multiply(double[,] data, double num)
         {
             return Multiply(num, data);
-            
+
         }
 
+
+        
         /// <summary>
         /// subtracts all the elements of the data array from an integer. 
         /// the result is an array whose element position correspond to
@@ -736,6 +739,65 @@ namespace ConsoleApp1
             }
             return output;
         }
+
+
+
+        /// <summary>
+        /// on each pixel, it selects the channel with the minimum value 
+        /// </summary>
+        /// <returns> a double[] array representing the minimum value of all three channels for each pixel</returns>
+        public double[,] SelectMinChannel()
+        {
+            if (IsGrey) { return Rcn; }
+            else
+            {
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+                double[,] output = new double[n, m];
+
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        //get the minimum between the red and green channel values for a given pixel
+                        double min1 = Math.Min(Rcn[i, j], Gcn[i, j]);
+
+                        //get the minimum between the Blue channel and the Red and Green channels for the given pixel
+                        output[i, j] = Math.Min(min1, Bcn[i, j]);
+                    }
+                }
+                return output;
+            }
+        }
+
+        /// <summary>
+        /// on each pixel, it selects the channel with the maximum value 
+        /// </summary>
+        /// <returns>a double[] array representing the maximum value of all three channels for each pixel</returns>
+        public double[,] SelectMaxChannel()
+        {
+            if (IsGrey) { return Rcn; }
+            else
+            {
+                int n = Rcn.GetLength(0);
+                int m = Rcn.GetLength(1);
+                double[,] output = new double[n, m];
+
+                for (int i = 0; i < n; i++)
+                {
+                    for (int j = 0; j < m; j++)
+                    {
+                        //get the maximum between the red and green channel values for a given pixel
+                        double min1 = Math.Max(Rcn[i, j], Gcn[i, j]);
+
+                        //get the maximum between the Blue channel and the Red and Green channels for the given pixel
+                        output[i, j] = Math.Max(min1, Bcn[i, j]);
+                    }
+                }
+                return output;
+            }
+        }
+
 
 
 

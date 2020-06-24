@@ -105,7 +105,8 @@ namespace ConsoleApp1
 
             double[,] Y = { { 1, 4 },
                             { 1, 2 } };
-
+            
+            
             double dotP = myProgram.DotProduct(X, Y);
             Console.WriteLine("Dot product is " + dotP);
 
