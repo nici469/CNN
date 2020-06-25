@@ -14,7 +14,7 @@ namespace ConsoleApp1
         
         static void TestImCode()
         {
-            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Cry2.jpg");
+            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\me3.jpg");
             //Bitmap newImage = new Bitmap("C:\\Users\\Prince of Erk\\Documents\\image\\im1.jpg");
             //newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\TulipsR.jpg");
 
@@ -54,7 +54,7 @@ namespace ConsoleApp1
             //Bitmap output = img.FinaliseBitmap();
             //Bitmap output = umm.FinaliseBitmap();
 
-            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\CryC.jpg");
+            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\output\\me3C.jpg");
 
             Console.WriteLine("thsis is for testing ImageLayer and Filter classes");
             Console.ReadKey(true);
