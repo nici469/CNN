@@ -14,7 +14,7 @@ namespace ConsoleApp1
         
         static void TestImCode()
         {
-            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips2.jpg");
+            Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Cry2.jpg");
             //Bitmap newImage = new Bitmap("C:\\Users\\Prince of Erk\\Documents\\image\\im1.jpg");
             //newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\TulipsR.jpg");
 
@@ -37,13 +37,13 @@ namespace ConsoleApp1
             test = test.PadCentral(2);
             //test = (test * img)/img;
 
-            //test = (test.SelectMaxChannel() * img)/200;
-            //test = test / 3;
+            test = (test.SelectMaxChannel() * img)/200;
+            test = test / 3;
 
             //test += 30;
             ;
-            test = new ImageLayer(test.SelectMaxChannel());
-            test = 200 - test;
+            //test = new ImageLayer(test.SelectMaxChannel());
+            //test = 220 - test;
            // double[,] R = CreateArray(200, 200, 180);
             //double[,] G = CreateArray(200, 200, 100);
             //double[,] B = CreateArray(200, 200, 120);
@@ -54,7 +54,7 @@ namespace ConsoleApp1
             //Bitmap output = img.FinaliseBitmap();
             //Bitmap output = umm.FinaliseBitmap();
 
-            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square5.jpg");
+            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\CryC.jpg");
 
             Console.WriteLine("thsis is for testing ImageLayer and Filter classes");
             Console.ReadKey(true);
