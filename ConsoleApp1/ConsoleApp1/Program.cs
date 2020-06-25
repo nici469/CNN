@@ -15,22 +15,64 @@ namespace ConsoleApp1
         static void TestImCode()
         {
             Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips2.jpg");
+            //Bitmap newImage = new Bitmap("C:\\Users\\Prince of Erk\\Documents\\image\\im1.jpg");
+            //newImage.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\TulipsR.jpg");
+
             ImageLayer img = new ImageLayer(newImage,false);
+            //Bitmap output = img.FinaliseBitmap();
+            //output.Save("C:\\Users\\Prince of Erk\\Documents\\image\\irr.jpg");
+
+            //Console.WriteLine("testing img");
+            //Console.ReadKey(true);
+            //return;
 
             Filter filter = new Filter();
+
+           
 
             ImageLayer testx = img.Convolve(filter.Sobel_x);
             ImageLayer testy = img.Convolve(filter.Sobel_y);
             ImageLayer test = ImageLayer.Sqrt(  (testx * testx) + (testy * testy)  );
 
-            test = test.SelectMaxChannel() * img/255;
-            test = test / 3;
+            test = test.PadCentral(2);
+            //test = (test * img)/img;
 
+            //test = (test.SelectMaxChannel() * img)/200;
+            //test = test / 3;
+
+            //test += 30;
+            ;
+            test = new ImageLayer(test.SelectMaxChannel());
+            test = 200 - test;
+           // double[,] R = CreateArray(200, 200, 180);
+            //double[,] G = CreateArray(200, 200, 100);
+            //double[,] B = CreateArray(200, 200, 120);
+            
+            //ImageLayer umm = new ImageLayer(R, G, B);
+            //umm = umm * 0.5*0.6;
             Bitmap output = test.FinaliseBitmap();
-            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square4.jpg");
+            //Bitmap output = img.FinaliseBitmap();
+            //Bitmap output = umm.FinaliseBitmap();
+
+            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square5.jpg");
 
             Console.WriteLine("thsis is for testing ImageLayer and Filter classes");
             Console.ReadKey(true);
+        }
+
+
+        static double[,] CreateArray(int width, int height, double value)
+        {
+            double[,] output = new double[width, height];
+            for(int i = 0; i < width; i++)
+            {
+                for(int j = 0; j < height; j++)
+                {
+                    output[i, j] = value;
+                }
+            }
+            return output;
+
         }
 
         static void Main(string[] args)

@@ -181,13 +181,13 @@ namespace ConsoleApp1
                     switch (channel)
                     {
                         case 0:
-                            output[i, j] = (double)color.R;
+                            output[i, j] = color.R;
                             break;
                         case 1:
-                            output[i, j] = (double)color.G;
+                            output[i, j] = color.G;
                             break;
                         case 2:
-                            output[i, j] = (double)color.B;
+                            output[i, j] = color.B;
                             break;
 
 
@@ -278,6 +278,56 @@ namespace ConsoleApp1
         public static ImageLayer operator /(ImageLayer A, double num)
         {
             return (A * (1.0 / num));
+        }
+
+        /// <summary>
+        /// performs elemnt-wise division A/B incorresponding channels of the two ImageLayer objects
+        /// </summary>
+        /// <param name="A">the numerator</param>
+        /// <param name="B">the denominator</param>
+        /// <returns></returns>
+        public static ImageLayer operator /(ImageLayer A, ImageLayer B)
+        {
+            CheckDimension(A, B);
+
+            if (A.IsGrey)
+            {
+                double[,] outR = Divide(A.Rcn, B.Rcn);
+                return new ImageLayer(outR);
+            }
+            else
+            {
+                double[,] outR = Divide(A.Rcn, B.Rcn);
+                double[,] outG = Divide(A.Gcn, B.Gcn);
+                double[,] outB = Divide(A.Bcn, B.Bcn);
+
+                return new ImageLayer(outR, outG, outB);
+            }
+        }
+
+        /// <summary>
+        /// performs the element-wise division A/B
+        /// </summary>
+        /// <param name="A">Numerator array</param>
+        /// <param name="B">Denominator array</param>
+        /// <returns></returns>
+        static double[,] Divide(double[,] A, double[,] B)
+        {
+            CheckDimension(A, B);
+            int n = A.GetLength(0);
+            int m = A.GetLength(1);
+            double[,] output = new double[n, m];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i, j] = A[i, j] / B[i, j];
+                }
+            }
+
+            return output;
+
         }
 
         //the minus operator
@@ -431,11 +481,20 @@ namespace ConsoleApp1
         /// <returns></returns>
         public static ImageLayer operator *(double[,] inDouble, ImageLayer iml)
         {
-            double[,] red =     Multiply(inDouble, iml.Rcn);
-            double[,] green =   Multiply(inDouble, iml.Gcn);
-            double[,] blue =    Multiply(inDouble, iml.Bcn);
+            if (iml.IsGrey)
+            {// if the imageLayer is a greyscale, handle only the R-channel
+                double[,] red = Multiply(inDouble, iml.Rcn);
+                return new ImageLayer(red);
+            }
+            else
+            {
+                double[,] red = Multiply(inDouble, iml.Rcn);
+                double[,] green = Multiply(inDouble, iml.Gcn);
+                double[,] blue = Multiply(inDouble, iml.Bcn);
 
-            return new ImageLayer(red, green, blue);
+                return new ImageLayer(red, green, blue);
+            }
+            
         }
 
         /// <summary>
@@ -447,11 +506,8 @@ namespace ConsoleApp1
         /// <returns></returns>
         public static ImageLayer operator *(ImageLayer iml, double[,] inDouble)
         {
-            double[,] red = Multiply(inDouble, iml.Rcn);
-            double[,] green = Multiply(inDouble, iml.Gcn);
-            double[,] blue = Multiply(inDouble, iml.Bcn);
-
-            return new ImageLayer(red, green, blue);
+            
+            return inDouble*iml;
         }
 
 
@@ -889,10 +945,10 @@ namespace ConsoleApp1
                     for (int j = 0; j < m; j++)
                     {
                         //get the maximum between the red and green channel values for a given pixel
-                        double min1 = Math.Max(Rcn[i, j], Gcn[i, j]);
+                        double max1 = Math.Max(Rcn[i, j], Gcn[i, j]);
 
                         //get the maximum between the Blue channel and the Red and Green channels for the given pixel
-                        output[i, j] = Math.Max(min1, Bcn[i, j]);
+                        output[i, j] = Math.Max(max1, Bcn[i, j]);
                     }
                 }
                 return output;
@@ -991,7 +1047,7 @@ namespace ConsoleApp1
                         int green = GTrim[i, j];
                         int blue = BTrim[i, j];
 
-                        Color color = Color.FromArgb(red, blue, green);
+                        Color color = Color.FromArgb(red, green, blue);
                         outBitmap.SetPixel(i, j, color);
                     }
                 }
@@ -1026,6 +1082,55 @@ namespace ConsoleApp1
                 double[,] BOut = ComputeConvolution(filter, Bcn);
 
                 return new ImageLayer(ROut, GOut, BOut);
+            }
+
+        }
+
+        /// <summary>
+        /// adds a P layers of zeros to the four edges of the input array
+        /// </summary>
+        /// <param name="input">the array to be center-padded</param>
+        /// <param name="p">the number of layers of center padding</param>
+        /// <returns></returns>
+        public double[,] PadCentral(double[,] input, int p)
+        {
+            int n = input.GetLength(0);
+            int m = input.GetLength(1);
+            double[,] output = new double[n + p, m + p];
+
+            for(int i = 0; i < n; i++)
+            {
+                for(int j = 0; j < m; j++)
+                {
+                    output[i + p, j + p] = input[i, j];
+                }
+            }
+
+            return output;
+        }
+
+        /// <summary>
+        /// Center-pad all image chanels of this instance of the imageLayer by P layers
+        /// </summary>
+        /// <param name="p">the number of layers of center padding</param>
+        /// <returns></returns>
+        public ImageLayer PadCentral(int p)
+        {
+            if (IsGrey)
+            {//if this ImageLayer object is a greyscale, pad only the R-channel
+                
+                double[,] outR = PadCentral(Rcn,p);
+
+                return new ImageLayer(outR);            
+            }
+            else
+            {
+                
+                double[,] outR = PadCentral(Rcn, p);
+                double[,] outG = PadCentral(Gcn, p); 
+                double[,] outB = PadCentral(Bcn, p); 
+                                
+                return new ImageLayer(outR, outG, outB);
             }
 
         }
