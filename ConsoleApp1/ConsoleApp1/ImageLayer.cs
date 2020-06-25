@@ -71,10 +71,18 @@ namespace ConsoleApp1
         /// <param name="inputB">the B-channel input</param>
         public ImageLayer(double[,] inputR, double[,] inputG, double[,] inputB)
         {
-            isGreyScale = false;
-            R = inputR;
-            G = inputG;
-            B = inputB;
+            if(CheckDimension(inputR, inputG) && CheckDimension(inputG, inputB))
+            {
+                isGreyScale = false;
+                R = inputR;
+                G = inputG;
+                B = inputB;
+            }
+            else
+            {
+                throw new Exception("dimensions of input arrays must match to create a non-greyscale ImageLayer object");
+            }
+            
         }
         /// <summary>
         /// loads image layer from a Bitmap; isGreyscale is set to false as it loads all
@@ -106,6 +114,11 @@ namespace ConsoleApp1
 
         }
 
+        /// <summary>
+        /// creates an ImageLayer from a Bitmap, specifying if it should be a greyscale
+        /// </summary>
+        /// <param name="bitmap">the Bitmap</param>
+        /// <param name="greyScale"> set to true if a greyScale ImageLayer output is required, else false</param>
         public ImageLayer(Bitmap bitmap, bool greyScale)
         {
             if (greyScale)
@@ -189,7 +202,7 @@ namespace ConsoleApp1
 
         //the Plus operator
         /// <summary>
-        /// overloaded plus operator
+        /// performs element-wise addition on corresponding channels of both imageLayer objects
         /// </summary>
         /// <param name="inputA"></param>
         /// <param name="inputB"></param>
@@ -971,14 +984,14 @@ namespace ConsoleApp1
             //and output a greyscale imageLayer object
             if (IsGrey)
             {
-                double[,] ROut = ComputeConvolution(Rcn, filter);
+                double[,] ROut = ComputeConvolution(filter, Rcn);
                 return new ImageLayer(ROut);
             }
             else
             {
-                double[,] ROut = ComputeConvolution(Rcn, filter);
-                double[,] GOut = ComputeConvolution(Gcn, filter);
-                double[,] BOut = ComputeConvolution(Bcn, filter);
+                double[,] ROut = ComputeConvolution(filter, Rcn);
+                double[,] GOut = ComputeConvolution(filter, Gcn);
+                double[,] BOut = ComputeConvolution(filter, Bcn);
 
                 return new ImageLayer(ROut, GOut, BOut);
             }
