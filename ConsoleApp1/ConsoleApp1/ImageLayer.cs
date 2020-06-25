@@ -254,6 +254,19 @@ namespace ConsoleApp1
             
         }
 
+        //the divide operator
+        /// <summary>
+        /// performs element-wise division, dividing all the elements in all the relevant
+        /// <para>channels of the ImageLayer by the given number</para>
+        /// </summary>
+        /// <param name="A"></param>
+        /// <param name="num"></param>
+        /// <returns></returns>
+        public static ImageLayer operator /(ImageLayer A, double num)
+        {
+            return (A * (1.0 / num));
+        }
+
         //the minus operator
         /// <summary>
         /// subtracts the relevant image array channels in the ImageLayer object from an integer
@@ -841,6 +854,7 @@ namespace ConsoleApp1
             }
         }
 
+
         /// <summary>
         /// returns n integer array that trims out all overbound
         /// <para>(less than 0 or greater than255) values to the boundaries 0 or 255</para>
@@ -942,5 +956,35 @@ namespace ConsoleApp1
 
 
         }
+
+        /// <summary>
+        /// computes the convolution output between the 3 color channels and
+        /// <para>the filter. The R-channel of the output is the result of the convolution </para>
+        /// of the R-channel of the input, and the filter, and so on
+        /// </summary>
+        /// <param name="imA">the imageLayer object</param>
+        /// <param name="filter">the filter array</param>
+        /// <returns></returns>
+        public ImageLayer Convolve(double[,] filter)
+        {
+            //if the input ImageLayer obect is a greyscale, work with only thr R-channel, 
+            //and output a greyscale imageLayer object
+            if (IsGrey)
+            {
+                double[,] ROut = ComputeConvolution(Rcn, filter);
+                return new ImageLayer(ROut);
+            }
+            else
+            {
+                double[,] ROut = ComputeConvolution(Rcn, filter);
+                double[,] GOut = ComputeConvolution(Gcn, filter);
+                double[,] BOut = ComputeConvolution(Bcn, filter);
+
+                return new ImageLayer(ROut, GOut, BOut);
+            }
+
+        }
+
+
     }
 }
