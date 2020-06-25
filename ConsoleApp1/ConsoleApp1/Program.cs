@@ -15,17 +15,19 @@ namespace ConsoleApp1
         static void TestImCode()
         {
             Bitmap newImage = new Bitmap("C:\\Users\\Public\\Pictures\\Sample Pictures\\Tulips2.jpg");
-            ImageLayer img = new ImageLayer(newImage,true);
+            ImageLayer img = new ImageLayer(newImage,false);
 
             Filter filter = new Filter();
 
             ImageLayer testx = img.Convolve(filter.Sobel_x);
             ImageLayer testy = img.Convolve(filter.Sobel_y);
             ImageLayer test = ImageLayer.Sqrt(  (testx * testx) + (testy * testy)  );
+
+            test = test.SelectMaxChannel() * img/255;
             test = test / 3;
 
             Bitmap output = test.FinaliseBitmap();
-            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square3.jpg");
+            output.Save("C:\\Users\\Public\\Pictures\\Sample Pictures\\Square4.jpg");
 
             Console.WriteLine("thsis is for testing ImageLayer and Filter classes");
             Console.ReadKey(true);

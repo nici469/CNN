@@ -422,6 +422,38 @@ namespace ConsoleApp1
             
         }
 
+        /// <summary>
+        /// returns an ImageLayer whose channels are the product of a double[,]
+        /// <para>array and the corresponding channels of the input ImageLayer</para>
+        /// </summary>
+        /// <param name="inDouble"></param>
+        /// <param name="iml"></param>
+        /// <returns></returns>
+        public static ImageLayer operator *(double[,] inDouble, ImageLayer iml)
+        {
+            double[,] red =     Multiply(inDouble, iml.Rcn);
+            double[,] green =   Multiply(inDouble, iml.Gcn);
+            double[,] blue =    Multiply(inDouble, iml.Bcn);
+
+            return new ImageLayer(red, green, blue);
+        }
+
+        /// <summary>
+        /// returns an ImageLayer whose channels are the product of a double[,]
+        /// <para>array and the corresponding channels of the input ImageLayer</para>
+        /// </summary>
+        /// <param name="inDouble"></param>
+        /// <param name="iml"></param>
+        /// <returns></returns>
+        public static ImageLayer operator *(ImageLayer iml, double[,] inDouble)
+        {
+            double[,] red = Multiply(inDouble, iml.Rcn);
+            double[,] green = Multiply(inDouble, iml.Gcn);
+            double[,] blue = Multiply(inDouble, iml.Bcn);
+
+            return new ImageLayer(red, green, blue);
+        }
+
 
         /// <summary>
         /// performs the element-wise multiplication of two arrays
